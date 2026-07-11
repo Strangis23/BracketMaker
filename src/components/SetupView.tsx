@@ -1,4 +1,4 @@
-import { BRACKET_SIZES, type BracketSize } from '../types';
+import { BRACKET_SIZES, type BracketSize, type TeamEntry } from '../types';
 
 interface TeamEntryRowProps {
   index: number;
@@ -69,31 +69,74 @@ function TeamEntryRow({
 interface SetupViewProps {
   bracketSize: BracketSize;
   onSizeChange: (size: BracketSize) => void;
-  entries: { name: string; imageUrl: string | null }[];
+  templateName: string;
+  onTemplateNameChange: (name: string) => void;
+  runnerName: string;
+  onRunnerNameChange: (name: string) => void;
+  entries: TeamEntry[];
   onAddEntry: () => void;
   onRemoveEntry: (index: number) => void;
-  onUpdateEntry: (index: number, update: { name?: string; imageUrl?: string | null }) => void;
+  onUpdateEntry: (index: number, update: Partial<TeamEntry>) => void;
   onStart: () => void;
+  onOpenHistory: () => void;
+  historyCount: number;
 }
 
 export function SetupView({
   bracketSize,
   onSizeChange,
+  templateName,
+  onTemplateNameChange,
+  runnerName,
+  onRunnerNameChange,
   entries,
   onAddEntry,
   onRemoveEntry,
   onUpdateEntry,
   onStart,
+  onOpenHistory,
+  historyCount,
 }: SetupViewProps) {
   const byeCount = bracketSize - entries.length;
-  const filledCount = entries.filter((e) => e.name.trim()).length;
+  const filledCount = entries.filter((entry) => entry.name.trim()).length;
 
   return (
     <div className="setup-view">
       <header className="page-header">
-        <h1>Bracket Maker</h1>
-        <p className="subtitle">Build a single-elimination tournament bracket</p>
+        <div className="setup-header-row">
+          <div>
+            <h1>Bracket Maker</h1>
+            <p className="subtitle">Build a single-elimination tournament bracket</p>
+          </div>
+          <button type="button" className="btn-secondary" onClick={onOpenHistory}>
+            History{historyCount > 0 ? ` (${historyCount})` : ''}
+          </button>
+        </div>
       </header>
+
+      <section className="setup-section">
+        <h2>Bracket Name</h2>
+        <p className="hint">Saved brackets can be rerun later to compare rankings.</p>
+        <input
+          type="text"
+          className="entry-name-input full-width"
+          placeholder="Untitled Bracket"
+          value={templateName}
+          onChange={(event) => onTemplateNameChange(event.target.value)}
+        />
+      </section>
+
+      <section className="setup-section">
+        <h2>Your Name</h2>
+        <p className="hint">Who is filling out this bracket? Used when comparing runs.</p>
+        <input
+          type="text"
+          className="entry-name-input full-width"
+          placeholder="Your name"
+          value={runnerName}
+          onChange={(event) => onRunnerNameChange(event.target.value)}
+        />
+      </section>
 
       <section className="setup-section">
         <h2>Bracket Size</h2>
@@ -124,19 +167,22 @@ export function SetupView({
         <p className="hint">
           Add a name and optional image for each team.
           {byeCount > 0 && (
-            <span className="bye-note"> {byeCount} slot{byeCount !== 1 ? 's' : ''} will be filled with byes.</span>
+            <span className="bye-note">
+              {' '}
+              {byeCount} slot{byeCount !== 1 ? 's' : ''} will be filled with byes.
+            </span>
           )}
         </p>
         <div className="team-entries">
-          {entries.map((entry, i) => (
+          {entries.map((entry, index) => (
             <TeamEntryRow
-              key={i}
-              index={i}
+              key={entry.id}
+              index={index}
               name={entry.name}
               imageUrl={entry.imageUrl}
-              onNameChange={(name) => onUpdateEntry(i, { name })}
-              onImageChange={(imageUrl) => onUpdateEntry(i, { imageUrl })}
-              onRemove={() => onRemoveEntry(i)}
+              onNameChange={(name) => onUpdateEntry(index, { name })}
+              onImageChange={(imageUrl) => onUpdateEntry(index, { imageUrl })}
+              onRemove={() => onRemoveEntry(index)}
               canRemove={entries.length > 1}
             />
           ))}

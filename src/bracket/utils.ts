@@ -16,7 +16,7 @@ export function createBye(id: string): Participant {
 }
 
 export function buildParticipants(
-  entries: { name: string; imageUrl: string | null }[],
+  entries: { id: string; name: string; imageUrl: string | null }[],
   size: BracketSize
 ): Participant[] {
   const seedOrder = getSeedOrder(size);
@@ -27,7 +27,7 @@ export function buildParticipants(
     if (seed <= entries.length) {
       const entry = entries[seed - 1];
       slots[slotIndex] = {
-        id: `p-${seed}`,
+        id: entry.id,
         name: entry.name.trim() || `Team ${seed}`,
         imageUrl: entry.imageUrl,
         isBye: false,

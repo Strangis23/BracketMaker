@@ -1,6 +1,7 @@
-import type { Match, Participant } from '../types';
+import type { Match, Participant, RunPlacement } from '../types';
 import { getRoundName } from '../bracket/utils';
 import { ParticipantCard } from './ParticipantCard';
+import { ShareWithFriendsButton } from './ShareModal';
 
 interface MatchViewProps {
   match: Match;
@@ -27,15 +28,9 @@ export function MatchView({
         <span className="match-label">Tap to pick the winner</span>
       </div>
       <div className="matchup">
-        <ParticipantCard
-          participant={p1}
-          onClick={() => onPickWinner(p1.id)}
-        />
+        <ParticipantCard participant={p1} onClick={() => onPickWinner(p1.id)} />
         <div className="vs-badge">VS</div>
-        <ParticipantCard
-          participant={p2}
-          onClick={() => onPickWinner(p2.id)}
-        />
+        <ParticipantCard participant={p2} onClick={() => onPickWinner(p2.id)} />
       </div>
     </div>
   );
@@ -48,6 +43,11 @@ interface PlayViewProps {
   totalRounds: number;
   complete: boolean;
   champion: Participant | null;
+  placements: RunPlacement[];
+  onViewHistory: () => void;
+  onRerun: () => void;
+  templateName: string | null;
+  shareUrl: string | null;
 }
 
 export function PlayView({
@@ -57,15 +57,56 @@ export function PlayView({
   totalRounds,
   complete,
   champion,
+  placements,
+  onViewHistory,
+  onRerun,
+  templateName,
+  shareUrl,
 }: PlayViewProps) {
   if (complete && champion) {
+    const rankedParticipants = placements
+      .map((placement) => {
+        const participant = participantMap.get(placement.participantId);
+        if (!participant || participant.isBye) return null;
+        return { participant, rank: placement.rank };
+      })
+      .filter(
+        (item): item is { participant: Participant; rank: number } => item !== null
+      );
+
     return (
       <div className="play-view complete">
         <div className="champion-banner">
           <span className="champion-label">Champion</span>
           <ParticipantCard participant={champion} />
         </div>
-        <p className="complete-message">Your bracket is complete!</p>
+        <p className="complete-message">Your bracket is complete and saved!</p>
+
+        {rankedParticipants.length > 1 && (
+          <section className="setup-section complete-rankings">
+            <h2>Final Rankings</h2>
+            <ol className="rankings-list compact-rankings">
+              {rankedParticipants.slice(0, 8).map(({ participant, rank }) => (
+                <li key={participant.id} className="rankings-item">
+                  <span className="rank-badge">#{rank}</span>
+                  <ParticipantCard participant={participant} compact />
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
+
+        <div className="complete-actions">
+          <ShareWithFriendsButton shareUrl={shareUrl} />
+          {templateName && (
+            <button type="button" className="btn-secondary" onClick={onRerun}>
+              Run Again
+            </button>
+          )}
+          <button type="button" className="btn-secondary" onClick={onViewHistory}>
+            View History & Stats
+          </button>
+        </div>
       </div>
     );
   }

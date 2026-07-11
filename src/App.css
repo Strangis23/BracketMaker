@@ -88,6 +88,12 @@ body {
   background: var(--accent);
 }
 
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
 .btn-text {
   background: none;
   border: none;
@@ -159,6 +165,22 @@ body {
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 0.25rem;
+}
+
+.setup-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+}
+
+.full-width {
+  width: 100%;
 }
 
 .subtitle {
@@ -501,6 +523,301 @@ body {
   text-align: center;
   color: var(--text-muted);
   padding: 3rem;
+}
+
+.complete-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.complete-rankings {
+  margin-top: 1.5rem;
+  text-align: left;
+}
+
+.complete-rankings h2 {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+}
+
+/* History */
+.history-view,
+.template-detail-view,
+.run-detail-view {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.empty-state {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.history-list,
+.run-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.history-card,
+.run-card-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--radius);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.history-card:hover,
+.run-card-main:hover {
+  background: var(--surface-hover);
+  border-color: var(--accent);
+}
+
+.history-card h2 {
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+.history-card-meta {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.history-card-arrow {
+  color: var(--text-muted);
+  font-size: 1.25rem;
+}
+
+.run-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.run-card .run-card-main {
+  flex: 1;
+}
+
+.rerun-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.rerun-form .entry-name-input {
+  flex: 1;
+  min-width: 220px;
+}
+
+.stats-table-wrap {
+  overflow-x: auto;
+}
+
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.stats-table th,
+.stats-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.stats-table th {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.stats-table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+.stats-team {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.stats-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.stats-avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.rank-best {
+  color: var(--winner);
+  font-weight: 600;
+}
+
+.rank-worst {
+  color: var(--loser);
+  font-weight: 600;
+}
+
+.comparison-table th,
+.comparison-table td {
+  text-align: center;
+}
+
+.comparison-table th:first-child,
+.comparison-table td:first-child {
+  text-align: left;
+}
+
+.rankings-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.rankings-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.rank-badge {
+  min-width: 2.5rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.compact-rankings .participant-card {
+  flex: 1;
+}
+
+.run-champion {
+  margin-bottom: 1.5rem;
+}
+
+.btn-text.danger {
+  color: var(--loser);
+}
+
+.btn-text.danger:hover {
+  color: #fca5a5;
+}
+
+.header-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.subsection-title {
+  font-size: 1rem;
+  margin: 1.25rem 0 0.75rem;
+}
+
+.shared-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.shared-actions {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.shared-bracket-view {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.shared-run-section {
+  margin-top: 1rem;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 100;
+}
+
+.modal-card {
+  width: min(560px, 100%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.modal-header h2 {
+  font-size: 1.25rem;
+}
+
+.modal-close {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.share-link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.share-link-input {
+  flex: 1;
+  min-width: 200px;
+  font-size: 0.875rem;
 }
 
 /* Bracket Overview */
