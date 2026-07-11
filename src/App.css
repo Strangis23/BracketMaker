@@ -866,6 +866,123 @@ body {
   font-size: 0.875rem;
 }
 
+.share-modal {
+  width: min(520px, 100%);
+}
+
+.share-list-preview {
+  background: linear-gradient(180deg, rgba(59, 130, 246, 0.08), rgba(59, 130, 246, 0.02));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  margin: 1rem 0;
+}
+
+.share-list-header {
+  text-align: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.share-list-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.share-list-meta {
+  margin-bottom: 1rem;
+}
+
+.share-list-meta p {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+  font-size: 0.95rem;
+}
+
+.share-list-label {
+  min-width: 4.5rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.share-list-rankings {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.share-list-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.share-list-item.podium {
+  border-color: rgba(255, 215, 0, 0.35);
+  background: rgba(255, 215, 0, 0.06);
+}
+
+.share-list-rank {
+  min-width: 2rem;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.share-list-item:not(.podium) .share-list-rank {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.share-list-name {
+  font-weight: 600;
+}
+
+.share-list-footer {
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.875rem;
+}
+
+.share-list-link {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--accent);
+  word-break: break-all;
+  text-decoration: none;
+}
+
+.share-list-link:hover {
+  text-decoration: underline;
+}
+
+.share-text-output {
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  font-family: ui-monospace, monospace;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  resize: vertical;
+}
+
 /* Bracket Overview */
 .bracket-overview {
   overflow: hidden;

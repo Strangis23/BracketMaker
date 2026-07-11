@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import type { BracketRun, BracketTemplate, Participant } from '../types';
-import { buildSharePayload } from '../share/buildSharePayload';
-import { buildShareUrl } from '../share/shareCodec';
+import { buildShareListFromRun } from '../share/shareList';
 import { BracketOverview } from './BracketOverview';
 import { ParticipantCard } from './ParticipantCard';
 import { ShareWithFriendsButton } from './ShareModal';
@@ -41,11 +40,10 @@ export function RunDetailView({ template, run, onBack }: RunDetailViewProps) {
       (item): item is { participant: Participant; rank: number } => item !== null
     );
 
-  const shareUrl = useMemo(() => {
-    if (!run.completedAt) return null;
-    const payload = buildSharePayload(template, [run]);
-    return payload ? buildShareUrl(payload) : null;
-  }, [template, run]);
+  const shareData = useMemo(
+    () => buildShareListFromRun(template, run),
+    [template, run]
+  );
 
   return (
     <div className="run-detail-view">
@@ -58,7 +56,7 @@ export function RunDetailView({ template, run, onBack }: RunDetailViewProps) {
           Completed {run.completedAt ? formatDate(run.completedAt) : 'in progress'}
         </p>
         <div className="header-actions">
-          <ShareWithFriendsButton shareUrl={shareUrl} label="Share This Run" />
+          <ShareWithFriendsButton shareData={shareData} label="Share Results" />
         </div>
       </header>
 

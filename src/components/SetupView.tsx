@@ -109,17 +109,24 @@ export function SetupView({
   const handleBulkImport = () => {
     const result = onBulkImport(bulkText);
     if (result.imported === 0) {
-      setImportMessage('No team names found. Enter one name per line.');
+      setImportMessage(
+        'No team names found. Paste one name per line, or a shared Bracket Maker results list.'
+      );
       return;
     }
 
+    if (result.bracketName) onTemplateNameChange(result.bracketName);
+    if (result.runnerName) onRunnerNameChange(result.runnerName);
+
+    let message = result.fromSharedList
+      ? `Imported shared results: ${result.imported} teams in ranking order.`
+      : `Imported ${result.imported} team${result.imported !== 1 ? 's' : ''}.`;
+
     if (result.skipped > 0) {
-      setImportMessage(
-        `Imported ${result.imported} teams. ${result.skipped} skipped (bracket size is ${bracketSize}).`
-      );
-    } else {
-      setImportMessage(`Imported ${result.imported} team${result.imported !== 1 ? 's' : ''}.`);
+      message += ` ${result.skipped} skipped (bracket size is ${bracketSize}).`;
     }
+
+    setImportMessage(message);
     setBulkText('');
   };
 
@@ -201,7 +208,10 @@ export function SetupView({
           <label className="bulk-import-label" htmlFor="bulk-import-text">
             Bulk import
           </label>
-          <p className="hint">Paste team names, one per line.</p>
+          <p className="hint">
+            Paste team names (one per line) or a shared Bracket Maker results list from a
+            friend.
+          </p>
           <textarea
             id="bulk-import-text"
             className="bulk-import-textarea"

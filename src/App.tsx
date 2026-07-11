@@ -1,35 +1,16 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { BracketOverview } from './components/BracketOverview';
 import { HistoryView } from './components/HistoryView';
 import { PlayView } from './components/PlayView';
 import { RunDetailView } from './components/RunDetailView';
 import { SetupView } from './components/SetupView';
-import { SharedBracketView } from './components/SharedBracketView';
 import { TemplateDetailView } from './components/TemplateDetailView';
 import { useBracket } from './bracket/useBracket';
 import { getPlacements, placementsToArray } from './bracket/rankings';
-import { buildSharePayload } from './share/buildSharePayload';
-import {
-  buildShareUrl,
-  clearShareFromLocation,
-  readSharePayloadFromLocation,
-} from './share/shareCodec';
-import type { SharedBracketPayload } from './share/buildSharePayload';
+import { buildShareListFromRun } from './share/shareList';
 import './App.css';
 
 function App() {
-  const [sharedPayload, setSharedPayload] = useState<SharedBracketPayload | null>(() =>
-    readSharePayloadFromLocation()
-  );
-  const [shareError, setShareError] = useState(false);
-
-  useEffect(() => {
-    const hash = window.location.hash;
-    if (hash.startsWith('#share=') && !sharedPayload) {
-      setShareError(true);
-    }
-  }, [sharedPayload]);
-
   const {
     view,
     setView,
@@ -63,6 +44,7 @@ function App() {
     selectedRun,
     templateRuns,
     activeTemplateId,
+    activeRunId,
     returnView,
   } = useBracket();
 
@@ -87,54 +69,21 @@ function App() {
     ? templates.find((template) => template.id === activeTemplateId) ?? null
     : null;
 
-  const activeTemplateRuns = useMemo(() => {
-    if (!activeTemplateId) return [];
-    return runs.filter((run) => run.templateId === activeTemplateId);
-  }, [activeTemplateId, runs]);
+  const activeRun = useMemo(() => {
+    if (!activeRunId) return null;
+    return runs.find((run) => run.id === activeRunId) ?? null;
+  }, [activeRunId, runs]);
 
-  const completeShareUrl = useMemo(() => {
-    if (!activeTemplate || !complete) return null;
-    const payload = buildSharePayload(activeTemplate, activeTemplateRuns);
-    return payload ? buildShareUrl(payload) : null;
-  }, [activeTemplate, activeTemplateRuns, complete]);
+  const completeShareData = useMemo(() => {
+    if (!activeTemplate || !activeRun) return null;
+    return buildShareListFromRun(activeTemplate, activeRun);
+  }, [activeTemplate, activeRun]);
 
   const completedTemplateCount = templates.filter((template) =>
     runs.some((run) => run.templateId === template.id && run.completedAt)
   ).length;
 
   const isPlaying = view === 'play' || view === 'overview';
-
-  const handleCreateOwn = () => {
-    clearShareFromLocation();
-    setSharedPayload(null);
-    setShareError(false);
-  };
-
-  if (shareError && !sharedPayload) {
-    return (
-      <div className="app">
-        <main className="app-main">
-          <div className="empty-state">
-            <h1>Invalid Share Link</h1>
-            <p className="hint">This link may be broken or incomplete.</p>
-            <button type="button" className="btn-primary" onClick={handleCreateOwn}>
-              Create Your Own Bracket
-            </button>
-          </div>
-        </main>
-      </div>
-    );
-  }
-
-  if (sharedPayload) {
-    return (
-      <div className="app">
-        <main className="app-main">
-          <SharedBracketView payload={sharedPayload} onCreateOwn={handleCreateOwn} />
-        </main>
-      </div>
-    );
-  }
 
   return (
     <div className="app">
@@ -209,7 +158,7 @@ function App() {
               }
             }}
             templateName={activeTemplate?.name ?? null}
-            shareUrl={completeShareUrl}
+            shareData={completeShareData}
           />
         )}
 

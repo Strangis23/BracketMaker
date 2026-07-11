@@ -1,4 +1,5 @@
 import type { Match, Participant, RunPlacement } from '../types';
+import type { ShareListData } from '../share/shareList';
 import { getRoundName } from '../bracket/utils';
 import { ParticipantCard } from './ParticipantCard';
 import { ShareWithFriendsButton } from './ShareModal';
@@ -47,7 +48,7 @@ interface PlayViewProps {
   onViewHistory: () => void;
   onRerun: () => void;
   templateName: string | null;
-  shareUrl: string | null;
+  shareData: ShareListData | null;
 }
 
 export function PlayView({
@@ -61,7 +62,7 @@ export function PlayView({
   onViewHistory,
   onRerun,
   templateName,
-  shareUrl,
+  shareData,
 }: PlayViewProps) {
   if (complete && champion) {
     const rankedParticipants = placements
@@ -97,7 +98,7 @@ export function PlayView({
         )}
 
         <div className="complete-actions">
-          <ShareWithFriendsButton shareUrl={shareUrl} />
+          <ShareWithFriendsButton shareData={shareData} />
           {templateName && (
             <button type="button" className="btn-secondary" onClick={onRerun}>
               Run Again

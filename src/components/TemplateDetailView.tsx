@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { BracketRun, BracketTemplate } from '../types';
-import { buildSharePayload } from '../share/buildSharePayload';
-import { buildShareUrl } from '../share/shareCodec';
+import { buildShareListFromRun } from '../share/shareList';
 import { BracketStatsPanel } from './BracketStatsPanel';
 import { ShareWithFriendsButton } from './ShareModal';
 
@@ -36,10 +35,11 @@ export function TemplateDetailView({
 }: TemplateDetailViewProps) {
   const [runnerName, setRunnerName] = useState('');
   const completedRuns = runs.filter((run) => run.completedAt);
-  const shareUrl = useMemo(() => {
-    const payload = buildSharePayload(template, runs);
-    return payload ? buildShareUrl(payload) : null;
-  }, [template, runs]);
+  const latestRun = completedRuns[0] ?? null;
+  const shareData = useMemo(
+    () => (latestRun ? buildShareListFromRun(template, latestRun) : null),
+    [latestRun, template]
+  );
 
   return (
     <div className="template-detail-view">
@@ -53,7 +53,10 @@ export function TemplateDetailView({
           {completedRuns.length !== 1 ? 's' : ''}
         </p>
         <div className="header-actions">
-          <ShareWithFriendsButton shareUrl={shareUrl} />
+          <ShareWithFriendsButton
+            shareData={shareData}
+            label={latestRun ? `Share ${latestRun.runnerName}'s Results` : 'Share Results'}
+          />
         </div>
       </header>
 
