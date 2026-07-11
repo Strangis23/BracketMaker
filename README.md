@@ -1,6 +1,6 @@
 # Bracket Maker
 
-A March Madness-style single-elimination bracket app. Add up to 256 teams with names and images, tap to pick winners, and view the full bracket with winners and losers highlighted.
+A March Madness-style single-elimination bracket app. Add up to 256 teams with names and images, tap to pick winners, and view the full bracket with winners and losers highlighted..
 
 ## Features
 
