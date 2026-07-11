@@ -32,7 +32,7 @@ This project is set up for GitHub Pages as a project site (`https://<user>.githu
 
 ### One-time setup
 
-1. Create a GitHub repository (for example `BracketsMaker`).
+1. Create a GitHub repository (for example `BracketMaker`).
 2. Push this project to the `main` branch.
 3. In the repo on GitHub, open **Settings → Pages**.
 4. Under **Build and deployment**, set **Source** to **GitHub Actions**.
@@ -51,10 +51,10 @@ https://<your-github-username>.github.io/<repo-name>/
 
 ### Local GitHub Pages preview
 
-If your repo name is not `BracketsMaker`, change the path in `build:gh-pages` inside `package.json`.
+The GitHub Actions workflow sets `BASE_PATH` automatically from the repository name. For local preview, change `/BracketMaker/` in `preview:gh-pages` inside `package.json` if your repo name differs.
 
 ```bash
 npm run preview:gh-pages
 ```
 
-Then open the URL shown in the terminal (paths will include `/BracketsMaker/`).
+Then open the URL shown in the terminal (paths will include `/BracketMaker/`).

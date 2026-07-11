@@ -6,10 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "build:gh-pages": "tsc -b && BASE_PATH=/BracketsMaker/ vite build",
+    "build:gh-pages": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "preview:gh-pages": "npm run build:gh-pages && vite preview"
+    "preview:gh-pages": "BASE_PATH=/BracketMaker/ npm run build:gh-pages && vite preview --base /BracketMaker/"
   },
   "dependencies": {
     "react": "^19.2.7",
