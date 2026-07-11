@@ -19,6 +19,7 @@ import {
   propagateWinners,
   resolveByeMatches,
 } from './utils';
+import { parseBulkImport, type BulkImportResult } from './bulkImport';
 import {
   createId,
   deleteRun,
@@ -116,6 +117,30 @@ export function useBracket() {
       prev.map((entry, i) => (i === index ? { ...entry, ...update } : entry))
     );
   }, []);
+
+  const bulkImportTeams = useCallback(
+    (text: string): BulkImportResult => {
+      const names = parseBulkImport(text);
+      if (names.length === 0) {
+        return { imported: 0, skipped: 0 };
+      }
+
+      const limited = names.slice(0, bracketSize);
+      setEntries(
+        limited.map((name) => ({
+          id: createId(),
+          name,
+          imageUrl: null,
+        }))
+      );
+
+      return {
+        imported: limited.length,
+        skipped: Math.max(0, names.length - bracketSize),
+      };
+    },
+    [bracketSize]
+  );
 
   const startBracket = useCallback(() => {
     const roster = entriesToRoster(entries);
@@ -358,6 +383,7 @@ export function useBracket() {
     addEntry,
     removeEntry,
     updateEntry,
+    bulkImportTeams,
     startBracket,
     pickWinner,
     resetBracket,

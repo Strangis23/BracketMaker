@@ -43,6 +43,7 @@ function App() {
     addEntry,
     removeEntry,
     updateEntry,
+    bulkImportTeams,
     startBracket,
     pickWinner,
     resetBracket,
@@ -179,6 +180,7 @@ function App() {
             onAddEntry={addEntry}
             onRemoveEntry={removeEntry}
             onUpdateEntry={updateEntry}
+            onBulkImport={bulkImportTeams}
             onStart={startBracket}
             onOpenHistory={openHistory}
             historyCount={completedTemplateCount}

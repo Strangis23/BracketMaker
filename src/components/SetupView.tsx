@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { BRACKET_SIZES, type BracketSize, type TeamEntry } from '../types';
+import type { BulkImportResult } from '../bracket/bulkImport';
 
 interface TeamEntryRowProps {
   index: number;
@@ -77,6 +79,7 @@ interface SetupViewProps {
   onAddEntry: () => void;
   onRemoveEntry: (index: number) => void;
   onUpdateEntry: (index: number, update: Partial<TeamEntry>) => void;
+  onBulkImport: (text: string) => BulkImportResult;
   onStart: () => void;
   onOpenHistory: () => void;
   historyCount: number;
@@ -93,12 +96,32 @@ export function SetupView({
   onAddEntry,
   onRemoveEntry,
   onUpdateEntry,
+  onBulkImport,
   onStart,
   onOpenHistory,
   historyCount,
 }: SetupViewProps) {
+  const [bulkText, setBulkText] = useState('');
+  const [importMessage, setImportMessage] = useState<string | null>(null);
   const byeCount = bracketSize - entries.length;
   const filledCount = entries.filter((entry) => entry.name.trim()).length;
+
+  const handleBulkImport = () => {
+    const result = onBulkImport(bulkText);
+    if (result.imported === 0) {
+      setImportMessage('No team names found. Enter one name per line.');
+      return;
+    }
+
+    if (result.skipped > 0) {
+      setImportMessage(
+        `Imported ${result.imported} teams. ${result.skipped} skipped (bracket size is ${bracketSize}).`
+      );
+    } else {
+      setImportMessage(`Imported ${result.imported} team${result.imported !== 1 ? 's' : ''}.`);
+    }
+    setBulkText('');
+  };
 
   return (
     <div className="setup-view">
@@ -173,6 +196,36 @@ export function SetupView({
             </span>
           )}
         </p>
+
+        <div className="bulk-import">
+          <label className="bulk-import-label" htmlFor="bulk-import-text">
+            Bulk import
+          </label>
+          <p className="hint">Paste team names, one per line.</p>
+          <textarea
+            id="bulk-import-text"
+            className="bulk-import-textarea"
+            placeholder={'Team Alpha\nTeam Beta\nTeam Gamma'}
+            value={bulkText}
+            rows={5}
+            onChange={(event) => {
+              setBulkText(event.target.value);
+              if (importMessage) setImportMessage(null);
+            }}
+          />
+          <div className="bulk-import-actions">
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={handleBulkImport}
+              disabled={!bulkText.trim()}
+            >
+              Import Teams
+            </button>
+            {importMessage && <p className="import-message">{importMessage}</p>}
+          </div>
+        </div>
+
         <div className="team-entries">
           {entries.map((entry, index) => (
             <TeamEntryRow
