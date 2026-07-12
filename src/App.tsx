@@ -1,4 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo, type CSSProperties } from 'react';
+import { useBannerAd } from './ads/useBannerAd';
+import { useNativeShell } from './native/useNativeShell';
 import { BracketOverview } from './components/BracketOverview';
 import { HistoryView } from './components/HistoryView';
 import { PlayView } from './components/PlayView';
@@ -11,6 +13,8 @@ import { buildShareListFromRun } from './share/shareList';
 import './App.css';
 
 function App() {
+  const { bannerHeightPx, isNative } = useBannerAd();
+  useNativeShell();
   const {
     view,
     setView,
@@ -85,38 +89,63 @@ function App() {
 
   const isPlaying = view === 'play' || view === 'overview';
 
-  return (
-    <div className="app">
-      {isPlaying && bracket && (
-        <nav className="app-nav">
-          <div className="nav-tabs">
-            <button
-              type="button"
-              className={view === 'play' ? 'active' : ''}
-              onClick={() => setView('play')}
-            >
-              Play
-            </button>
-            <button
-              type="button"
-              className={view === 'overview' ? 'active' : ''}
-              onClick={() => setView('overview')}
-            >
-              Bracket
-            </button>
-          </div>
-          <div className="nav-actions">
-            <button type="button" className="btn-text" onClick={openHistory}>
-              History
-            </button>
-            <button type="button" className="btn-text" onClick={resetBracket}>
-              New Bracket
-            </button>
-          </div>
-        </nav>
-      )}
+  const appStyle = useMemo(
+    () =>
+      isNative
+        ? ({
+            '--banner-space': `${bannerHeightPx}px`,
+            '--content-extra-top': '1.25rem',
+            '--content-extra-bottom': `${bannerHeightPx + 48}px`,
+          } as CSSProperties)
+        : undefined,
+    [bannerHeightPx, isNative]
+  );
 
-      <main className="app-main">
+  return (
+    <div className="app" style={appStyle}>
+      <div className="app-content-frame">
+        {isNative && (
+          <header className="app-chrome-header">
+            <div className="app-chrome-header-bar">
+              <span className="app-chrome-title">Bracket Maker</span>
+            </div>
+          </header>
+        )}
+
+        {isPlaying && bracket && (
+          <nav className="app-nav">
+            <div className="nav-tabs">
+              <button
+                type="button"
+                className={view === 'play' ? 'active' : ''}
+                onClick={() => setView('play')}
+              >
+                Play
+              </button>
+              <button
+                type="button"
+                className={view === 'overview' ? 'active' : ''}
+                onClick={() => setView('overview')}
+              >
+                Bracket
+              </button>
+            </div>
+            <div className="nav-actions">
+              <button type="button" className="btn-text" onClick={openHistory}>
+                History
+              </button>
+              <button type="button" className="btn-text" onClick={resetBracket}>
+                New Bracket
+              </button>
+            </div>
+          </nav>
+        )}
+
+        <main className="app-main">
+        {isNative && (
+          <div className="app-main-spacer app-main-spacer-top" aria-hidden="true" />
+        )}
+
         {view === 'setup' && (
           <SetupView
             bracketSize={bracketSize}
@@ -199,7 +228,16 @@ function App() {
             onBack={() => openTemplateDetail(selectedTemplate.id)}
           />
         )}
-      </main>
+
+        {isNative && (
+          <div className="app-main-spacer app-main-spacer-bottom" aria-hidden="true" />
+        )}
+        </main>
+      </div>
+
+      {isNative && (
+        <footer className="app-ad-frame" aria-label="Advertisement" />
+      )}
     </div>
   );
 }

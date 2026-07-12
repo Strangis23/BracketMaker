@@ -9,9 +9,15 @@
     "build:gh-pages": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "preview:gh-pages": "BASE_PATH=/BracketMaker/ npm run build:gh-pages && vite preview --base /BracketMaker/"
+    "preview:gh-pages": "BASE_PATH=/BracketMaker/ npm run build:gh-pages && vite preview --base /BracketMaker/",
+    "build:android": "npm run build && npx cap sync android",
+    "open:android": "bash scripts/open-android.sh"
   },
   "dependencies": {
+    "@capacitor-community/admob": "^8.0.0",
+    "@capacitor/android": "^8.4.1",
+    "@capacitor/cli": "^8.4.1",
+    "@capacitor/core": "^8.4.1",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },
