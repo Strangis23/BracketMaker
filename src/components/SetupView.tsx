@@ -51,8 +51,23 @@ function TeamEntryRow({
             </button>
           </div>
         ) : (
-          <label className="image-upload-label">
-            <span>📷</span>
+          <label className="image-upload-label" aria-label="Add team image">
+            <svg
+              className="upload-icon"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M12 16V8m0 0-2.5 2.5M12 8l2.5 2.5M4 16.5V18a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1.5"
+                stroke="currentColor"
+                strokeWidth="1.75"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
             <input type="file" accept="image/*" onChange={handleImageUpload} hidden />
           </label>
         )}
@@ -234,24 +249,27 @@ export function SetupView({
         </div>
       </section>
 
-      <section className="setup-section">
+      <section className="setup-section setup-section-teams">
         <div className="section-header">
-          <h2>Teams ({entries.length} / {bracketSize})</h2>
+          <div>
+            <h2>Teams</h2>
+            <p className="section-meta">
+              {entries.length} of {bracketSize} slots filled
+              {byeCount > 0 && (
+                <span className="bye-note">
+                  {' · '}
+                  {byeCount} bye{byeCount !== 1 ? 's' : ''}
+                </span>
+              )}
+            </p>
+          </div>
           {entries.length < bracketSize && (
             <button type="button" className="btn-secondary" onClick={onAddEntry}>
               + Add Team
             </button>
           )}
         </div>
-        <p className="hint">
-          Add a name and optional image for each team.
-          {byeCount > 0 && (
-            <span className="bye-note">
-              {' '}
-              {byeCount} slot{byeCount !== 1 ? 's' : ''} will be filled with byes.
-            </span>
-          )}
-        </p>
+        <p className="hint">Add a name and optional image for each team.</p>
 
         <div className="bulk-import-section">
           <button
@@ -314,14 +332,19 @@ export function SetupView({
         </div>
       </section>
 
-      <button
-        type="button"
-        className="btn-primary btn-large"
-        onClick={onStart}
-        disabled={filledCount < 2}
-      >
-        Start Bracket
-      </button>
+      <div className="setup-actions">
+        <button
+          type="button"
+          className="btn-primary btn-large"
+          onClick={onStart}
+          disabled={filledCount < 2}
+        >
+          Start Bracket
+        </button>
+        {filledCount < 2 && (
+          <p className="setup-actions-hint">Add at least 2 teams to begin.</p>
+        )}
+      </div>
     </div>
   );
 }
