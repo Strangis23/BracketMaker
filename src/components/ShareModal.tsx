@@ -26,10 +26,12 @@ function ShareListPreview({ data }: { data: ShareListData }) {
         </p>
       </div>
       <ol className="share-list-rankings">
-        {data.rankedEntries.map((entry) => (
+        {data.rankedEntries
+          .filter((entry) => entry.rank <= 3)
+          .map((entry) => (
           <li
             key={`${entry.rank}-${entry.name}`}
-            className={`share-list-item ${entry.rank <= 3 ? 'podium' : ''}`}
+            className="share-list-item podium"
           >
             <span className="share-list-rank">{rankLabel(entry.rank)}</span>
             <span className="share-list-name">{entry.name}</span>
