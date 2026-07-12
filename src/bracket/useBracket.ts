@@ -119,7 +119,8 @@ export function useBracket() {
   }, []);
 
   const bulkImportTeams = useCallback(
-    (text: string): BulkImportResult => {
+    (text: string, targetBracketSize?: BracketSize): BulkImportResult => {
+      const size = targetBracketSize ?? bracketSize;
       const parsed = parseImportText(text);
       const { names, bracketName, runnerName, fromSharedList } = resolveImportNames(parsed);
 
@@ -127,7 +128,12 @@ export function useBracket() {
         return { imported: 0, skipped: 0, fromSharedList: false };
       }
 
-      const limited = names.slice(0, bracketSize);
+      const limited = names.slice(0, size);
+
+      if (targetBracketSize !== undefined) {
+        setBracketSizeState(targetBracketSize);
+      }
+
       setEntries(
         limited.map((name) => ({
           id: createId(),
@@ -138,7 +144,7 @@ export function useBracket() {
 
       return {
         imported: limited.length,
-        skipped: Math.max(0, names.length - bracketSize),
+        skipped: Math.max(0, names.length - size),
         bracketName,
         runnerName,
         fromSharedList,

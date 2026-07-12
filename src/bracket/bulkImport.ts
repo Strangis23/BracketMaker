@@ -1,4 +1,7 @@
+import { BRACKET_SIZES, type BracketSize } from '../types';
 import { parseSharedList, type ParsedSharedList } from '../share/shareList';
+
+export const MAX_TEAMS = 256;
 
 export function parsePlainLines(text: string): string[] {
   return text
@@ -24,6 +27,21 @@ export interface BulkImportResult {
   bracketName?: string;
   runnerName?: string;
   fromSharedList: boolean;
+}
+
+export function countImportNames(text: string): {
+  names: string[];
+  bracketName?: string;
+  runnerName?: string;
+  fromSharedList: boolean;
+} {
+  const parsed = parseImportText(text);
+  return resolveImportNames(parsed);
+}
+
+export function suggestBracketSize(teamCount: number): BracketSize | null {
+  if (teamCount <= 0 || teamCount > MAX_TEAMS) return null;
+  return BRACKET_SIZES.find((size) => size >= teamCount) ?? MAX_TEAMS;
 }
 
 export function resolveImportNames(

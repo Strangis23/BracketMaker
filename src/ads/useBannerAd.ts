@@ -24,7 +24,7 @@ export function useBannerAd() {
     const listenerHandles: Array<{ remove: () => Promise<void> }> = [];
 
     async function showBanner() {
-      await AdMob.initialize({ initializeForTesting: true });
+      await AdMob.initialize();
 
       const sizeListener = await AdMob.addListener(
         BannerAdPluginEvents.SizeChanged,
@@ -42,7 +42,7 @@ export function useBannerAd() {
         adSize: BannerAdSize.ADAPTIVE_BANNER,
         position: BannerAdPosition.BOTTOM_CENTER,
         margin: 0,
-        isTesting: true,
+        isTesting: false,
       });
     }
 

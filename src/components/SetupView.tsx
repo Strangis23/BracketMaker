@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import { BRACKET_SIZES, type BracketSize, type TeamEntry } from '../types';
-import type { BulkImportResult } from '../bracket/bulkImport';
+import {
+  countImportNames,
+  MAX_TEAMS,
+  suggestBracketSize,
+  type BulkImportResult,
+} from '../bracket/bulkImport';
 
 interface TeamEntryRowProps {
   index: number;
@@ -79,7 +84,7 @@ interface SetupViewProps {
   onAddEntry: () => void;
   onRemoveEntry: (index: number) => void;
   onUpdateEntry: (index: number, update: Partial<TeamEntry>) => void;
-  onBulkImport: (text: string) => BulkImportResult;
+  onBulkImport: (text: string, targetBracketSize?: BracketSize) => BulkImportResult;
   onStart: () => void;
   onOpenHistory: () => void;
   historyCount: number;
@@ -101,13 +106,53 @@ export function SetupView({
   onOpenHistory,
   historyCount,
 }: SetupViewProps) {
+  const [bulkOpen, setBulkOpen] = useState(false);
   const [bulkText, setBulkText] = useState('');
   const [importMessage, setImportMessage] = useState<string | null>(null);
   const byeCount = bracketSize - entries.length;
   const filledCount = entries.filter((entry) => entry.name.trim()).length;
 
   const handleBulkImport = () => {
-    const result = onBulkImport(bulkText);
+    const { names } = countImportNames(bulkText);
+
+    if (names.length === 0) {
+      setImportMessage(
+        'No team names found. Paste one name per line, or a shared Bracket Maker results list.'
+      );
+      return;
+    }
+
+    if (names.length > MAX_TEAMS) {
+      setImportMessage(
+        `Too many teams (${names.length}). The maximum bracket size is ${MAX_TEAMS} teams.`
+      );
+      return;
+    }
+
+    let targetBracketSize = bracketSize;
+    const previousBracketSize = bracketSize;
+
+    if (names.length > bracketSize) {
+      const suggestedSize = suggestBracketSize(names.length);
+      if (!suggestedSize) {
+        setImportMessage(
+          `Too many teams (${names.length}). The maximum bracket size is ${MAX_TEAMS} teams.`
+        );
+        return;
+      }
+
+      const increaseSize = window.confirm(
+        `You pasted ${names.length} teams, but the bracket size is ${bracketSize}. Change bracket size to ${suggestedSize} and import all teams?`
+      );
+
+      if (increaseSize) {
+        targetBracketSize = suggestedSize;
+        onSizeChange(suggestedSize);
+      }
+    }
+
+    const result = onBulkImport(bulkText, targetBracketSize);
+
     if (result.imported === 0) {
       setImportMessage(
         'No team names found. Paste one name per line, or a shared Bracket Maker results list.'
@@ -122,8 +167,12 @@ export function SetupView({
       ? `Imported shared results: ${result.imported} teams in ranking order.`
       : `Imported ${result.imported} team${result.imported !== 1 ? 's' : ''}.`;
 
+    if (targetBracketSize > previousBracketSize) {
+      message += ` Bracket size updated to ${targetBracketSize}.`;
+    }
+
     if (result.skipped > 0) {
-      message += ` ${result.skipped} skipped (bracket size is ${bracketSize}).`;
+      message += ` ${result.skipped} skipped (bracket size is ${targetBracketSize}).`;
     }
 
     setImportMessage(message);
@@ -204,36 +253,49 @@ export function SetupView({
           )}
         </p>
 
-        <div className="bulk-import">
-          <label className="bulk-import-label" htmlFor="bulk-import-text">
-            Bulk import
-          </label>
-          <p className="hint">
-            Paste team names (one per line) or a shared Bracket Maker results list from a
-            friend.
-          </p>
-          <textarea
-            id="bulk-import-text"
-            className="bulk-import-textarea"
-            placeholder={'Team Alpha\nTeam Beta\nTeam Gamma'}
-            value={bulkText}
-            rows={5}
-            onChange={(event) => {
-              setBulkText(event.target.value);
-              if (importMessage) setImportMessage(null);
-            }}
-          />
-          <div className="bulk-import-actions">
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={handleBulkImport}
-              disabled={!bulkText.trim()}
-            >
-              Import Teams
-            </button>
-            {importMessage && <p className="import-message">{importMessage}</p>}
-          </div>
+        <div className="bulk-import-section">
+          <button
+            type="button"
+            className="bulk-import-toggle"
+            onClick={() => setBulkOpen((open) => !open)}
+            aria-expanded={bulkOpen}
+          >
+            <span>Bulk import</span>
+            <span className="bulk-import-chevron" aria-hidden="true">
+              {bulkOpen ? '▾' : '▸'}
+            </span>
+          </button>
+
+          {bulkOpen && (
+            <div className="bulk-import">
+              <p className="hint">
+                Paste team names (one per line) or a shared Bracket Maker results list from a
+                friend.
+              </p>
+              <textarea
+                id="bulk-import-text"
+                className="bulk-import-textarea"
+                placeholder={'Team Alpha\nTeam Beta\nTeam Gamma'}
+                value={bulkText}
+                rows={5}
+                onChange={(event) => {
+                  setBulkText(event.target.value);
+                  if (importMessage) setImportMessage(null);
+                }}
+              />
+              <div className="bulk-import-actions">
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={handleBulkImport}
+                  disabled={!bulkText.trim()}
+                >
+                  Import Teams
+                </button>
+                {importMessage && <p className="import-message">{importMessage}</p>}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="team-entries">
